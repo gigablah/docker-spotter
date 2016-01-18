@@ -25,7 +25,7 @@ const APIVERSION = "1.8"
 var (
 	proto  = flag.String("proto", "unix", "protocol to use")
 	addr   = flag.String("addr", "/var/run/docker.sock", "address to connect to")
-	since  = flag.String("since", "1", "watch for events since given value in seconds since epoch")
+	since  = flag.String("since", "-1", "watch for events since given value in seconds since epoch")
 	replay = flag.String("replay", "", "file to use to simulate/replay events from. Format = docker events")
 	debug  = flag.Bool("v", false, "verbose logging")
 	hm     hookMap
@@ -138,7 +138,9 @@ func main() {
 	}
 
 	v := url.Values{}
-	v.Set("since", *since)
+	if *since != "-1" {
+		v.Set("since", *since)
+	}
 
 	resp, err := request("/events?" + v.Encode())
 	if err != nil {
